@@ -1,5 +1,5 @@
 ---
-agent: "build"
+mode: "agent"
 
 tools: ["Testing Agent/*"]
 

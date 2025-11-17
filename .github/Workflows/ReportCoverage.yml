@@ -2,13 +2,25 @@ name: CI Tests with JaCoCo
 
 on:
   push:
-    branches: [ main, master ]  
+    branches:
+      - main
+      - master
+      - "test-improvement/**"
+      - "bugfix/**"
+      - "feature/**"
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    # All `run:` steps execute inside the Java codebase folder
+    defaults:
+      run:
+        working-directory: codebase
 
     steps:
       - name: Checkout code
@@ -18,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'      
+          java-version: '21'
 
       - name: Cache Maven repository
         uses: actions/cache@v4
@@ -31,8 +43,189 @@ jobs:
       - name: Run tests with coverage
         run: mvn -B clean verify
 
+      - name: Enforce coverage threshold and publish summary
+        run: |
+          python << 'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          import os
+
+          xml_path = Path("target/site/jacoco/jacoco.xml")
+          if not xml_path.exists():
+              raise SystemExit(f"JaCoCo report not found at {xml_path}")
+
+          tree = ET.parse(xml_path)
+          root = tree.getroot()
+
+          missed = covered = 0
+          for c in root.findall("counter"):
+              if c.attrib.get("type") == "INSTRUCTION":
+                  missed = int(c.attrib.get("missed", "0"))
+                  covered = int(c.attrib.get("covered", "0"))
+                  break
+
+          total = missed + covered
+          coverage = (covered / total * 100.0) if total else 0.0
+          threshold = 80.0  # adjust as needed
+
+          summary = (
+              "## JaCoCo Coverage Summary\n\n"
+              f"- Instruction coverage: **{coverage:.2f}%**\n"
+              f"- Threshold: **{threshold:.2f}%**\n"
+          )
+
+          summary_file = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_file:
+              with open(summary_file, "a", encoding="utf-8") as f:
+                  f.write(summary + "\n")
+
+          print(summary)
+
+          if coverage < threshold:
+              raise SystemExit(
+                  f"Coverage {coverage:.2f}% is below threshold {threshold:.2f}%"
+              )
+          PY
+
       - name: Upload JaCoCo report artifact
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco/
+          # path is relative to repo root, so include `codebase/`
+          path: codebase/target/site/jacoco/
+
+  quality-dashboard:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download JaCoCo report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: jacoco-report
+
+      - name: Generate quality metrics dashboard
+        run: |
+          python << 'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          import json
+          import os
+          from datetime import datetime
+
+          # Find jacoco.xml inside the downloaded artifact
+          root_dir = Path("jacoco-report")
+          xml_path = None
+          for p in root_dir.rglob("jacoco.xml"):
+              xml_path = p
+              break
+
+          if xml_path is None:
+              raise SystemExit(f"Could not find jacoco.xml under {root_dir}")
+
+          tree = ET.parse(xml_path)
+          root = tree.getroot()
+
+          instr_missed = instr_covered = 0
+          branch_missed = branch_covered = 0
+
+          for c in root.findall("counter"):
+              ctype = c.attrib.get("type")
+              missed = int(c.attrib.get("missed", "0"))
+              covered = int(c.attrib.get("covered", "0"))
+              if ctype == "INSTRUCTION":
+                  instr_missed = missed
+                  instr_covered = covered
+              elif ctype == "BRANCH":
+                  branch_missed = missed
+                  branch_covered = covered
+
+          def ratio(missed, covered):
+              total = missed + covered
+              return (covered / total * 100.0) if total else 0.0
+
+          instr_cov = ratio(instr_missed, instr_covered)
+          branch_cov = ratio(branch_missed, branch_covered)
+
+          # Basic run metadata from GitHub Actions env
+          sha = os.environ.get("GITHUB_SHA", "")
+          run_id = os.environ.get("GITHUB_RUN_ID", "")
+          run_number = os.environ.get("GITHUB_RUN_NUMBER", "")
+          ref = os.environ.get("GITHUB_REF", "")
+          ts = datetime.utcnow().isoformat() + "Z"
+
+          # JSON metrics snapshot
+          metrics = {
+              "run": {
+                  "sha": sha,
+                  "run_id": run_id,
+                  "run_number": run_number,
+                  "ref": ref,
+                  "timestamp_utc": ts,
+              },
+              "coverage": {
+                  "instruction": {
+                      "missed": instr_missed,
+                      "covered": instr_covered,
+                      "percent": instr_cov,
+                  },
+                  "branch": {
+                      "missed": branch_missed,
+                      "covered": branch_covered,
+                      "percent": branch_cov,
+                  },
+              },
+              # Placeholders for test quality metrics (can be filled by the agent / later tooling)
+              "test_quality": {
+                  "total_tests": None,
+                  "assertions_per_test": None,
+                  "edge_case_tests": None,
+                  "regression_tests": None,
+                  "bugs_fixed_in_this_run": None,
+              },
+          }
+
+          # Write JSON dashboard
+          json_path = Path("testing-metrics.json")
+          json_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+
+          # Write Markdown dashboard
+          md_lines = []
+          md_lines.append("# Testing Quality Dashboard (Snapshot)")
+          md_lines.append("")
+          md_lines.append(f"- Run: `{run_number}` (ID: `{run_id}`)")
+          md_lines.append(f"- Commit: `{sha}`")
+          md_lines.append(f"- Ref: `{ref}`")
+          md_lines.append(f"- Time (UTC): `{ts}`")
+          md_lines.append("")
+          md_lines.append("## Coverage")
+          md_lines.append(f"- Instruction coverage: **{instr_cov:.2f}%** "
+                          f"(covered {instr_covered}, missed {instr_missed})")
+          md_lines.append(f"- Branch coverage: **{branch_cov:.2f}%** "
+                          f"(covered {branch_covered}, missed {branch_missed})")
+          md_lines.append("")
+          md_lines.append("## Test Quality (placeholders)")
+          md_lines.append("- Total tests: _TBD_")
+          md_lines.append("- Assertions per test: _TBD_")
+          md_lines.append("- Edge-case tests: _TBD_")
+          md_lines.append("- Regression tests: _TBD_")
+          md_lines.append("- Bugs fixed in this run: _TBD_")
+          md_lines.append("")
+
+          md_path = Path("testing-dashboard.md")
+          md_path.write_text("\n".join(md_lines), encoding="utf-8")
+
+          print("Generated testing-metrics.json and testing-dashboard.md")
+          PY
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testing-dashboard
+          path: |
+            testing-dashboard.md
+            testing-metrics.json
