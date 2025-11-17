@@ -11,7 +11,7 @@ An intelligent agent (using MCP) that automatically generates, executes, and ite
 * JaCoCo Coverage report artifact creation.
 * Model Context Protocol servers for development automation.
 * Github Workflow for automatic creation and upload of artifacts.
-* Custom automation tools for software development workflows: "**Specification-Based Testing Generator**", "**AI Code Review Agent**"
+* Custom automation tools for software development workflows: "**Specification-Based Testing Generator**"
 
 This project aims to speed up the development process w/ strong software engineering principles, ultimately applicable to real-world development scenarios, with the help of the software testing agent.
 
