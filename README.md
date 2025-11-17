@@ -34,7 +34,25 @@ Whenever the agent makes a commit to the repo, it will execute the `generate qua
 The following files are created at execution of the workflow job:
 * `testing-metrics.json` Instruction + branch coverage countrs and percentages metadata for the MCP agent 
 * `testing-dashboard.md` Summarizes coverage and run information on test quality details (assertions, edge cases, bugs fixed).
-## Install
+## Extension
+
+### Specification-Based Testing Generator
+The agent performs boundary value analysis and generates equivalence class test cases.
+
+### AI Code Review Agent
+This feature is to come in a later build.
+
+## Output
+The agent is instructed to create dashboards / reports on analysis. The files are:
+* `testing-dashboard.md`
+    * Coverage analysis on the specified respository.
+* `ANALYSIS_AND_SPEC_TESTS.md`
+    * This document details the comprehensive analysis and specification-based test generation
+* `PROJECT_ANALYSIS_RESULTS.md` 
+    * The raw statistical results of analysis.
+
+This repo comes pre-loaded w/ samples. Feel free to delete these for clean generation of new files. The agent will automatically generate these when instructed to perform analysis / generation of tests. 
+## Installation
 Clone the repo with:
 ```shell
 git clone https://github.com/cazaresb/Software_Testing_Agent
@@ -87,7 +105,7 @@ pip install javalang
 
 Now you should be mostly ready to run the Software Testing Agent!
 
-## How to use the agent
+## How to use the agent & demo run
 The basic use of this agent is best when you have generated some tests already for your own `Java` codebase. The agent will align itself with the MCP context to improve these tests. Otherwise, the agent will start from scratch after statically analyzing the codebase.
 
 Let's say that the repository I want to automatically create and improve tests on is a repository called `codebase`. I can have the agent work on precisely this with the following:
@@ -117,14 +135,82 @@ Software_Testing_Agent> python server.py
 ```
 Now your CoPilot Chat is set up to be a `Software Testing Agent`
 
-You may prompt this agent to perform the operations mentioned in `Overview`. It has access to git utilities to automatically push changes to your repository.
+You may prompt this agent to perform the operations mentioned in `Overview`. It has access to 
+git utilities to automatically push changes to your repository.
 
-## Extensions
+In the CoPilot chat, you can select as a tool `Testing Agent`. This is required to ensure the tool uses the utilities provided by the MCP. 
 
-### Specification-Based Testing Generator
+A good first prompt to ensure the agent is communicating / using the utilities properly is:
+```
+"List all MCP tools"
+```
+You should see an output such as this
+```
+I'll list all the MCP (Model Context Protocol) tools available to me in this context:
 
+mcp_testing_agent_analyze_coverage - Analyzes JaCoCo XML reports for Java projects and recommends coverage improvements
+mcp_testing_agent_analyze_java_project - Analyzes a Java project and returns classes and method signatures
+mcp_testing_agent_auto_test_and_commit - Runs Maven tests, ensures coverage meets a threshold, and automatically stages and commits changes
+mcp_testing_agent_generate_junit_tests - Generates JUnit 5 test skeletons based on public method signatures
+mcp_testing_agent_generate_spec_based_tests - Generates test cases based on boundary value analysis and equivalence class analysis for a specific method
+mcp_testing_agent_git_add_all - Stages all changes with intelligent filtering (excludes build artifacts and temp files)
+mcp_testing_agent_git_commit - Creates an automated commit with standardized messages, including coverage statistics
+mcp_testing_agent_git_pull_request - Creates a pull request against a specified base branch
+mcp_testing_agent_git_push - Pushes changes to a remote repository with upstream configuration
+mcp_testing_agent_git_status - Returns clean status, staged changes, and conflicts for a Git repository
 
-### AI Code Review Agent
+These tools are specifically designed for Java project testing, coverage analysis, and Git workflow automation.
+```
+**IMPORTANT**: If using a CoPilot chat, you must load the prompt manually every session into the chat's memory. Copy everything below the header in `.github/prompts/tester.prompt.md` and paste into the chat. Now the agent is aligned.
+
+Now, I can have my agent automatically test for me. With our current configuration I can have the agent perform a test run and analysis with the following prompt:
+```
+"Analyze the Java project at software_testing_agent/codebase and run the tests"
+```
+
+You should see output such as this:
+```
+Summary of What's Ready
+Created File: SPEC_BASED_TEST_IMPLEMENTATION_GUIDE.md (1,200+ lines)
+
+This guide provides:
+
+✅ 4 Complete Test Suites (JUnit 4 Format)
+TypeUtils Spec Tests - 12 test methods
+
+Null handling, identity, superclass assignment
+Autoboxing/unboxing, generic types
+Equivalence classes mapped with BVA
+FastDatePrinter Spec Tests - 15 test methods
+
+Null input, standard formatting, time-only
+Epoch, leap year, year boundaries
+Timezone handling, DST, locales
+FastDateFormat Spec Tests - 16 test methods
+
+3 method variants (Date, Calendar, long)
+Consistency tests, thread safety
+Performance benchmarking
+ConstructorUtils Spec Tests - 14 test methods
+
+Standard classes (String, Integer, Date, ArrayList)
+Error cases (abstract, interface, null)
+Exception handling
+📋 Implementation Structure
+Each test includes:
+
+Clear test method naming (spec_##_description)
+Specification comment (boundary, equivalence class, expected behavior)
+TODO markers for assertion implementation
+JavaDoc with BVA context
+🎯 Ready-to-Code Format
+✅ Coverage Targets Documented
+TypeUtils: 35% → 65%+
+FastDatePrinter: 29-63% → 70%+
+FastDateFormat: 40-60% → 75%+
+ConstructorUtils: 60% → 80%+
+```
+Happy testing! FAQ and Troubleshoting below:
 
 ## Frequently Asked Questions & Troubleshooting
 ***How does the agent integrate with Github workflows?***
@@ -185,3 +271,24 @@ The agent refers to the absolute path of the codebase it is performing analysis 
     </plugin>
 ```
 
+If the tests have not been run yet, then there is no JaCoCo report available yet. You may locally run the tests on the codebase to generate a report, or the agent can do it for you (just ask it). 
+
+Ensure within your `target` folder, a `jacoco` directory exists with a `jacoco.xml` file.
+Afterwards, it can re-run analysis with the new JaCoCo report.
+
+***My current tests have build failures, can the agent fix these errors?***
+
+The agent will try its best to fix changes when prompted. The sample `codebase` has a few to demonstrate the adaptability of the agent. However, it is important to provide meaningful prompts to instruct the agent to fix errors. 
+
+**If the codebase has build failures, then a JaCoCO report may not be generated.** This means that analysis cannot be performed.
+
+Use a prompt such as this:
+```
+"The current codebase has build failures when executing tests, perform static analysis on the tests, propose changes, and revise the tests to improve coverage..."
+```
+
+***Does this agent support Junit 4?***
+
+No, but yes. The agent's `MCP` tools are built on `JUnit 5` standards, thus generation of `JUnit 4` is unsupported. 
+
+However, the agent is capable of recognizing `JUnit 4` standard tests, but it is not recommended to use this Software Testing Agent's `MCP` if writing tests in `JUnit 4`
