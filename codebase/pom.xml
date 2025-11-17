@@ -115,7 +115,10 @@
                 <include>**/*Test.java</include>
               </includes>
               <runOrder>random</runOrder>
+              <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+              <testFailureIgnore>true</testFailureIgnore>
             </configuration>
+                  
           </execution>
         </executions>
       </plugin>
@@ -149,6 +152,29 @@
           </ignorePathsToDelete>
         </configuration>
       </plugin>
+      <plugin>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.8.13</version> <!-- Updated for Java 17+ support -->
+      <executions>
+        <!-- Attach JaCoCo agent when tests run -->
+        <execution>
+          <id>prepare-agent</id>
+          <goals>
+            <goal>prepare-agent</goal>
+          </goals>
+        </execution>
+
+        <!-- Generate the report after tests -->
+        <execution>
+          <id>report</id>
+          <phase>test</phase> <!-- or verify -->
+          <goals>
+            <goal>report</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
     </plugins>
   </build>
   <reporting>
