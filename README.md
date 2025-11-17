@@ -46,6 +46,13 @@ gh repo clone cazaresb/Software_Testing_Agent
 * This agent was created with VSCode's CoPilot chat feature in mind. You must use VSCode for the base implementation.
 * Add your own repo, or test using the codebase included in the repo at Software_Testing_Agent/codebase.
 ### Working w/ your own Java codebase
+
+**Requirements**
+* Java codebase.
+* The codebase must be a Maven project.
+* The codebase must be configured to produce Jacoco reports. 
+* The codebase must have Junit plugin
+
 You can add your own Java codebase by changing the hardcoded .yml file in .github/workflows.
 
 The .yml file currently defaults to this codebase. Change it to your repo's path name or simply its name if inserted as: Software_Testing_Agent/"YourRepoName".
@@ -119,7 +126,7 @@ You may prompt this agent to perform the operations mentioned in `Overview`. It 
 
 ### AI Code Review Agent
 
-## Frequently Asked Questions
+## Frequently Asked Questions & Troubleshooting
 ***How does the agent integrate with Github workflows?***
 The agent interacts with the CI runs on multiple branches within your repository: `feature`, `test-improvement`, and `bugfix`
 
@@ -135,3 +142,46 @@ The agent has an elaborate feedback loop which has access to rich MCP tools. Ess
 
 
 The agent is instructed to expose bugs in the code, and implements fixes before moving on. It works on these changes within the `bugfix` branch
+
+***My agent cannot find the Jacoco report / complete operations, what do I do?***
+
+The agent relies on the project's configuration to perform most tasks (the exception being static analysis). If the agent fails to find the report, it will attempt to run the tests. However, if Jacoco is not setup, then this will fail.
+
+The agent refers to the absolute path of the codebase it is performing analysis and work on. Ensure you have `Jacoco`, `Maven`, and `Junit` plugins/dependencies required in your codebase's pom.xml file. Your Jacoco plugin must be configured to create a report and Junit dependency for testing.
+```xml
+
+<!-- Jacoco Report Dependency -->
+<dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+<plugin> <!-- Jacoco Report Plugin -->
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.8.12</version> <!-- or the version you prefer -->
+      <executions>
+        <!-- Attach JaCoCo agent when tests run -->
+        <execution>
+          <id>prepare-agent</id>
+          <goals>
+            <goal>prepare-agent</goal>
+          </goals>
+        </execution>
+
+        <!-- Generate the report after tests -->
+        <execution>
+          <id>report</id>
+          <phase>test</phase> <!-- or verify -->
+          <goals>
+            <goal>report</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+```
+
