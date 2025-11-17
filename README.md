@@ -34,6 +34,8 @@ Whenever the agent makes a commit to the repo, it will execute the `generate qua
 The following files are created at execution of the workflow job:
 * `testing-metrics.json` Instruction + branch coverage countrs and percentages metadata for the MCP agent 
 * `testing-dashboard.md` Summarizes coverage and run information on test quality details (assertions, edge cases, bugs fixed).
+
+You can find the dashboard file under `.github/testing-dashboard.md`
 ## Extension
 
 ### Specification-Based Testing Generator
