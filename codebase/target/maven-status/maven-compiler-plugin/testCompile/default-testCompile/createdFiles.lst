@@ -8,6 +8,7 @@ org\apache\commons\lang3\time\FastDateFormatTest$2.class
 org\apache\commons\lang3\reflect\MethodUtilsTest.class
 org\apache\commons\lang3\text\ExtendedMessageFormatTest$LowerCaseFormat.class
 org\apache\commons\lang3\AnnotationUtilsTest$NestAnnotation.class
+org\apache\commons\lang3\text\translate\CodePointTranslatorTest.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestTSubObject.class
 org\apache\commons\lang3\builder\HashCodeBuilderAndEqualsBuilderTest.class
 org\apache\commons\lang3\event\EventListenerSupportTest$2$1.class
@@ -42,6 +43,7 @@ org\apache\commons\lang3\builder\ReflectionToStringBuilderConcurrencyTest$1.clas
 org\apache\commons\lang3\reflect\AClass$GClass.class
 org\apache\commons\lang3\text\StrBuilderAppendInsertTest$3.class
 org\apache\commons\lang3\builder\CompareToBuilderTest$TestSubObject.class
+org\apache\commons\lang3\builder\ReflectionToStringBuilderTest.class
 org\apache\commons\lang3\builder\EqualsBuilderTest.class
 org\apache\commons\lang3\reflect\testbed\PublicChild.class
 org\apache\commons\lang3\builder\ReflectionToStringBuilderConcurrencyTest$CollectionHolder.class
@@ -52,6 +54,7 @@ org\apache\commons\lang3\builder\EqualsBuilderTest$TestObjectWithMultipleFields.
 org\apache\commons\lang3\builder\NoFieldNamesToStringStyleTest.class
 org\apache\commons\lang3\event\EventUtilsTest$MultipleEventSource.class
 org\apache\commons\lang3\builder\ReflectionToStringBuilderMutateInspectConcurrencyTest$MutatingClient.class
+org\apache\commons\lang3\text\translate\JavaUnicodeEscaperTest.class
 org\apache\commons\lang3\concurrent\BackgroundInitializerTest.class
 org\apache\commons\lang3\exception\ContextedRuntimeExceptionTest$1.class
 org\apache\commons\lang3\reflect\AAAClass.class
@@ -110,14 +113,17 @@ org\apache\commons\lang3\time\FastDateParserTest.class
 org\apache\commons\lang3\reflect\TypeUtilsTest$That.class
 org\apache\commons\lang3\text\StrBuilderAppendInsertTest$2.class
 org\apache\commons\lang3\RangeTest$1.class
+org\apache\commons\lang3\SerializationExceptionTest.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestACanEqualB.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestSubObject.class
+org\apache\commons\lang3\concurrent\ConcurrentExceptionTest.class
 org\apache\commons\lang3\ClassUtilsTest$7Named.class
 org\apache\commons\lang3\ObjectUtilsTest$NonComparableCharSequence.class
 org\apache\commons\lang3\ObjectUtilsTest$CharSequenceComparator.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestTSubObject2.class
 org\apache\commons\lang3\ClassUtilsTest$CX.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestObjectReference.class
+org\apache\commons\lang3\time\FormatCacheTest$2.class
 org\apache\commons\lang3\builder\ToStringStyleConcurrencyTest$CollectionHolder.class
 org\apache\commons\lang3\concurrent\ConcurrentUtilsTest.class
 org\apache\commons\lang3\text\StrLookupTest.class
@@ -164,6 +170,7 @@ org\apache\commons\lang3\text\translate\LookupTranslatorTest.class
 org\apache\commons\lang3\event\EventListenerSupportTest$1.class
 org\apache\commons\lang3\ArrayUtilsTest.class
 org\apache\commons\lang3\event\EventUtilsTest$PropertyChangeSource.class
+org\apache\commons\lang3\exception\CloneFailedExceptionTest.class
 org\apache\commons\lang3\ValidateTest.class
 org\apache\commons\lang3\builder\HashCodeBuilderTest$TestSubObject.class
 org\apache\commons\lang3\reflect\AClass$CClass.class
@@ -175,6 +182,7 @@ org\apache\commons\lang3\SerializationUtilsTest$1.class
 org\apache\commons\lang3\RangeTest$3.class
 org\apache\commons\lang3\ClassUtilsTest$8Named.class
 org\apache\commons\lang3\ArrayUtilsRemoveTest.class
+org\apache\commons\lang3\builder\IDKeyTest.class
 org\apache\commons\lang3\ObjectUtilsTest.class
 org\apache\commons\lang3\reflect\testbed\Foo.class
 org\apache\commons\lang3\text\StrSubstitutorTest$1.class
@@ -183,6 +191,7 @@ org\apache\commons\lang3\CharEncodingTest.class
 org\apache\commons\lang3\ObjectUtilsTest$UncloneableString.class
 org\apache\commons\lang3\StringUtilsEqualsIndexOfTest$CustomCharSequence.class
 org\apache\commons\lang3\text\StrBuilderAppendInsertTest$1.class
+org\apache\commons\lang3\time\FormatCacheTest$1.class
 org\apache\commons\lang3\tuple\ImmutablePairTest.class
 org\apache\commons\lang3\ClassUtilsTest$CY.class
 org\apache\commons\lang3\builder\EqualsBuilderTest$TestTTLeafObject.class
@@ -196,6 +205,7 @@ org\apache\commons\lang3\builder\CompareToBuilderTest$TestObject.class
 org\apache\commons\lang3\builder\ToStringBuilderTest$ObjectCycle.class
 org\apache\commons\lang3\builder\ToStringBuilderTest$Outer.class
 org\apache\commons\lang3\event\EventUtilsTest.class
+org\apache\commons\lang3\time\FormatCacheTest.class
 org\apache\commons\lang3\event\EventListenerSupportTest$3.class
 org\apache\commons\lang3\text\StrBuilderAppendInsertTest$12.class
 org\apache\commons\lang3\time\DurationFormatUtilsTest.class
@@ -217,6 +227,7 @@ org\apache\commons\lang3\reflect\MethodUtilsTest$ChildObject.class
 org\apache\commons\lang3\StringUtilsTrimEmptyTest.class
 org\apache\commons\lang3\ClassUtilsTest$1Named.class
 org\apache\commons\lang3\SerializationUtilsTest.class
+org\apache\commons\lang3\text\translate\AggregateTranslatorTest.class
 org\apache\commons\lang3\builder\ShortPrefixToStringStyleTest.class
 org\apache\commons\lang3\text\ExtendedMessageFormatTest$OverrideShortDateFormatFactory.class
 org\apache\commons\lang3\reflect\AAClass$BBClass.class
@@ -272,6 +283,7 @@ org\apache\commons\lang3\reflect\MethodUtilsTest$GrandParentObject.class
 org\apache\commons\lang3\reflect\testbed\StaticContainer.class
 org\apache\commons\lang3\builder\CompareToBuilderTest.class
 org\apache\commons\lang3\reflect\AAClass.class
+org\apache\commons\lang3\text\translate\CharSequenceTranslatorTest.class
 org\apache\commons\lang3\mutable\MutableBooleanTest.class
 org\apache\commons\lang3\time\DateUtilsRoundingTest.class
 org\apache\commons\lang3\BooleanUtilsTest.class
@@ -297,6 +309,7 @@ org\apache\commons\lang3\reflect\AClass.class
 org\apache\commons\lang3\event\EventUtilsTest$1.class
 org\apache\commons\lang3\CharRangeTest.class
 org\apache\commons\lang3\reflect\testbed\Parent.class
+org\apache\commons\lang3\concurrent\ConcurrentRuntimeExceptionTest.class
 org\apache\commons\lang3\AnnotationUtilsTest.class
 org\apache\commons\lang3\text\StrBuilderAppendInsertTest.class
 org\apache\commons\lang3\builder\DefaultToStringStyleTest.class

@@ -1,37 +1,34 @@
 package org.apache.commons.lang3.time;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class FormatCacheTest {
 
     @Test
-    void test_getInstance() {
-        // Arrange
-        FormatCache obj = new FormatCache();
-
-        // Act
-        var result = obj.getInstance();
-
-        // Assert
-        // TODO: add meaningful assertions
-        fail("Not yet implemented");
+    public void testGetInstance_default() {
+        FormatCache<java.text.Format> obj = new FormatCache<java.text.Format>() {
+            @Override
+            protected java.text.Format createInstance(String pattern, java.util.TimeZone timeZone, java.util.Locale locale) {
+                return new java.text.SimpleDateFormat(pattern, locale);
+            }
+        };
+        assertNotNull("getInstance() should not return null", obj.getInstance());
     }
 
     @Test
-    void test_getInstance() {
-        // Arrange
-        FormatCache obj = new FormatCache();
-        // TODO: initialize parameter 'pattern' of type 'String'
-        // TODO: initialize parameter 'timeZone' of type 'TimeZone'
-        // TODO: initialize parameter 'locale' of type 'Locale'
-
-        // Act
-        var result = obj.getInstance(pattern, timeZone, locale);
-
-        // Assert
-        // TODO: add meaningful assertions
-        fail("Not yet implemented");
+    public void testGetInstance_withParams() {
+        FormatCache<java.text.Format> obj = new FormatCache<java.text.Format>() {
+            @Override
+            protected java.text.Format createInstance(String pattern, java.util.TimeZone timeZone, java.util.Locale locale) {
+                return new java.text.SimpleDateFormat(pattern, locale);
+            }
+        };
+        String pattern = "yyyy";
+        java.util.TimeZone tz = java.util.TimeZone.getDefault();
+        java.util.Locale locale = java.util.Locale.getDefault();
+        assertNotNull("getInstance(pattern, tz, locale) should not return null",
+                obj.getInstance(pattern, tz, locale));
     }
 
 }

@@ -69,7 +69,52 @@ public enum JavaVersion {
     /**
      * Java 1.8.
      */
-    JAVA_1_8(1.8f, "1.8");
+    JAVA_1_8(1.8f, "1.8"),
+
+    /**
+     * Java 9.
+     */
+    JAVA_9(9.0f, "9"),
+
+    /**
+     * Java 10.
+     */
+    JAVA_10(10.0f, "10"),
+
+    /**
+     * Java 11.
+     */
+    JAVA_11(11.0f, "11"),
+
+    /**
+     * Java 12.
+     */
+    JAVA_12(12.0f, "12"),
+
+    /**
+     * Java 13.
+     */
+    JAVA_13(13.0f, "13"),
+
+    /**
+     * Java 14.
+     */
+    JAVA_14(14.0f, "14"),
+
+    /**
+     * Java 15.
+     */
+    JAVA_15(15.0f, "15"),
+
+    /**
+     * Java 16.
+     */
+    JAVA_16(16.0f, "16"),
+
+    /**
+     * Java 17.
+     */
+    JAVA_17(17.0f, "17");
 
     /**
      * The float value.
@@ -147,7 +192,53 @@ public enum JavaVersion {
             return JAVA_1_7;
         } else if ("1.8".equals(nom)) {
             return JAVA_1_8;
+        } else if ("9".equals(nom) || (nom != null && nom.startsWith("9."))) {
+            return JAVA_9;
+        } else if ("10".equals(nom) || (nom != null && nom.startsWith("10."))) {
+            return JAVA_10;
+        } else if ("11".equals(nom) || (nom != null && nom.startsWith("11."))) {
+            return JAVA_11;
+        } else if ("12".equals(nom) || (nom != null && nom.startsWith("12."))) {
+            return JAVA_12;
+        } else if ("13".equals(nom) || (nom != null && nom.startsWith("13."))) {
+            return JAVA_13;
+        } else if ("14".equals(nom) || (nom != null && nom.startsWith("14."))) {
+            return JAVA_14;
+        } else if ("15".equals(nom) || (nom != null && nom.startsWith("15."))) {
+            return JAVA_15;
+        } else if ("16".equals(nom) || (nom != null && nom.startsWith("16."))) {
+            return JAVA_16;
+        } else if ("17".equals(nom) || (nom != null && nom.startsWith("17."))) {
+            return JAVA_17;
         } else {
+            // Try to handle numeric major versions like "9", "11.0.2" generically
+            if (nom != null) {
+                final String base = nom.contains(".") ? nom.substring(0, nom.indexOf('.')) : nom;
+                try {
+                    final int major = Integer.parseInt(base);
+                    if (major >= 17) {
+                        return JAVA_17;
+                    } else if (major >= 16) {
+                        return JAVA_16;
+                    } else if (major >= 15) {
+                        return JAVA_15;
+                    } else if (major >= 14) {
+                        return JAVA_14;
+                    } else if (major >= 13) {
+                        return JAVA_13;
+                    } else if (major >= 12) {
+                        return JAVA_12;
+                    } else if (major >= 11) {
+                        return JAVA_11;
+                    } else if (major >= 10) {
+                        return JAVA_10;
+                    } else if (major >= 9) {
+                        return JAVA_9;
+                    }
+                } catch (final NumberFormatException ex) {
+                    // ignore and return null below
+                }
+            }
             return null;
         }
     }

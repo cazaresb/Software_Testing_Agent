@@ -464,14 +464,37 @@ public class NumberUtils {
             }
         }
         if (pfxLen > 0) { // we have a hex number
-            final int hexDigits = str.length() - pfxLen;
+            // Count hex digits excluding leading zeros so that strings like 0x007FFFFFFF
+            // are treated as having 8 significant hex digits (and fit in an int).
+            final String hexPart = str.substring(pfxLen);
+            int firstNonZero = 0;
+            while (firstNonZero < hexPart.length() && hexPart.charAt(firstNonZero) == '0') {
+                firstNonZero++;
+            }
+            int hexDigits = hexPart.length() - firstNonZero;
+            if (hexDigits <= 0) {
+                // string is all zeros like 0x0
+                hexDigits = 1;
+            }
             if (hexDigits > 16) { // too many for Long
                 return createBigInteger(str);
             }
-            if (hexDigits > 8) { // too many for an int
-                return createLong(str);
+            if (hexDigits > 8) { // too many for an int; try Long, but fall back to BigInteger if Long.decode fails (e.g. 0x800...)
+                try {
+                    return createLong(str);
+                } catch (final NumberFormatException nfe) {
+                    return createBigInteger(str);
+                }
             }
-            return createInteger(str);
+            try {
+                return createInteger(str);
+            } catch (final NumberFormatException nfe) {
+                try {
+                    return createLong(str);
+                } catch (final NumberFormatException nfe2) {
+                    return createBigInteger(str);
+                }
+            }
         }
         final char lastChar = str.charAt(str.length() - 1);
         String mant;

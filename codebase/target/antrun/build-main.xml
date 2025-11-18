@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="maven-antrun-" default="main"  >
 <target name="main">
-  <copy todir="C:\Users\Brian\Documents\Repos\software_testing_agent\codebase\target/apidocs/META-INF">
-    <fileset dir="C:\Users\Brian\Documents\Repos\software_testing_agent\codebase">
+  <copy todir="C:\Users\cazar\Documents\GitRepos\Software_Testing_Agent\codebase\target/apidocs/META-INF">
+    <fileset dir="C:\Users\cazar\Documents\GitRepos\Software_Testing_Agent\codebase">
       <include name="LICENSE.txt"/>
       <include name="NOTICE.txt"/>
     </fileset>

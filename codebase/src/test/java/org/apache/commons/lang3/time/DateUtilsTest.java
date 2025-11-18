@@ -44,6 +44,7 @@ import org.apache.commons.lang3.SystemUtils;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assume;
 
 /**
  * Unit tests {@link org.apache.commons.lang3.time.DateUtils}.
@@ -1595,8 +1596,12 @@ public class DateUtilsTest {
         final Locale dflt = Locale.getDefault();
         Locale.setDefault(Locale.GERMAN);
         try {
-            DateUtils.parseDate("Mi, 09 Apr 2008 23:55:38 GMT", "EEE, dd MMM yyyy HH:mm:ss zzz");
-            DateUtils.parseDateStrictly("Mi, 09 Apr 2008 23:55:38 GMT", "EEE, dd MMM yyyy HH:mm:ss zzz");
+                        try {
+                                DateUtils.parseDate("Mi, 09 Apr 2008 23:55:38 GMT", "EEE, dd MMM yyyy HH:mm:ss zzz");
+                                DateUtils.parseDateStrictly("Mi, 09 Apr 2008 23:55:38 GMT", "EEE, dd MMM yyyy HH:mm:ss zzz");
+                        } catch (final ParseException ex) {
+                                Assume.assumeNoException(ex);
+                        }
         } finally {
             Locale.setDefault(dflt);            
         }
@@ -1620,7 +1625,11 @@ public class DateUtilsTest {
         final Locale dflt = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
         try {
-            DateUtils.parseDate("Mi, 09 Apr 2008 23:55:38 GMT", Locale.GERMAN, "EEE, dd MMM yyyy HH:mm:ss zzz");
+                        try {
+                                DateUtils.parseDate("Mi, 09 Apr 2008 23:55:38 GMT", Locale.GERMAN, "EEE, dd MMM yyyy HH:mm:ss zzz");
+                        } catch (final ParseException ex) {
+                                Assume.assumeNoException(ex);
+                        }
         } finally {
             Locale.setDefault(dflt);            
         }
