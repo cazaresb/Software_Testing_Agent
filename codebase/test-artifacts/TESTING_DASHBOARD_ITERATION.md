@@ -36,5 +36,4 @@
 **Artifacts**
 - JaCoCo HTML: `codebase/target/site/jacoco/index.html`
 - JaCoCo exec: `codebase/target/jacoco.exec`
-- This dashboard: `TESTING_DASHBOARD_ITERATION.md`
-
+- This dashboard: `test-artifacts/TESTING_DASHBOARD_ITERATION.md`
